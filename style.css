@@ -1,31 +1,65 @@
-QMainWindow {
-    background-color: #f9f9f9;
+/* Estilos generales */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+    margin: 0;
+    padding: 0;
 }
 
+/* Estilos para etiquetas */
 QLabel {
-    font-size: 16px;
+    font-size: 18px;
     color: #333;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
 }
 
-QLineEdit, QComboBox {
-    font-size: 14px;
-    padding: 8px;
+/* Estilos para campos de entrada y selección */
+QLineEdit,
+QComboBox {
+    font-size: 16px;
+    padding: 10px;
     border: 1px solid #ccc;
-    border-radius: 4px;
+    border-radius: 6px;
     background-color: #fff;
     color: #333;
+    width: 100%;
+    margin-bottom: 15px;
 }
 
+QLineEdit:focus,
+QComboBox:focus {
+    border-color: #68B3C8;
+}
+
+/* Estilos para botones */
 QPushButton {
-    font-size: 14px;
-    padding: 10px 16px;
+    font-size: 16px;
+    padding: 12px 24px;
     border: none;
-    border-radius: 4px;
-    background-color: #ff0000;
+    border-radius: 8px;
+    background-color: #4CAF50;
     color: #fff;
+    text-align: center;
 }
 
 QPushButton:hover {
-    background-color: #cc0000;
+    background-color: #45a049;
+}
+
+/* Estilos para la barra de menú */
+QMenuBar {
+    background-color: #333;
+    color: white;
+}
+
+QMenuBar::item {
+    background-color: #333;
+    color: white;
+    padding: 8px 16px;
+    margin: 4px;
+    border-radius: 6px;
+}
+
+QMenuBar::item:selected {
+    background-color: #45a049;
 }
