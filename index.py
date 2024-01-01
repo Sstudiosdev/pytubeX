@@ -75,10 +75,13 @@ class YouTubeDownloaderApp(QMainWindow):
         self.english_action.triggered.connect(lambda: self.change_language_to('languages/messages_en.json'))
         config_menu.addAction(self.english_action)
 
-        self.spanish_action = QAction('Español', self)
+        self.spanish_action = QAction('Spanish', self)
         self.spanish_action.triggered.connect(lambda: self.change_language_to('languages/messages_es.json'))
         config_menu.addAction(self.spanish_action)
-        # Puedes añadir más idiomas y acciones aquí si es necesario
+
+        self.japan_action = QAction('Japan', self)
+        self.japan_action.triggered.connect(lambda: self.change_language_to('languages/messages_jp.json'))
+        config_menu.addAction(self.japan_action)
 
     def change_language_to(self, language_file):
         self.messages = self.load_messages(language_file)
@@ -97,7 +100,7 @@ class YouTubeDownloaderApp(QMainWindow):
         download_audio_format = self.format_audio_combo.currentText()
 
         try:
-            if download_video_format == "Seleccionar..." and download_audio_format == "Seleccionar...":
+            if download_video_format == "..." and download_audio_format == "...":
                 QMessageBox.warning(self, 'Error', self.messages['select_at_least_one_format'])
                 return
 
@@ -127,7 +130,8 @@ class YouTubeDownloaderApp(QMainWindow):
             else:
                 QMessageBox.warning(self, 'Error', self.messages['file_not_found'])
         except Exception as e:
-            QMessageBox.critical(self, 'Error', f'Error al descargar el archivo: {str(e)}')
+            error_message = self.messages['error_download'].format(error_message=str(e))
+            QMessageBox.critical(self, 'Error', error_message)
 
 def run_app():
     app = QApplication(sys.argv)
