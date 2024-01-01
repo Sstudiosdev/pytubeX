@@ -1,5 +1,5 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QLineEdit, QPushButton, QVBoxLayout, QWidget, QMessageBox, QComboBox, QDesktopWidget, QFileDialog
+from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QLineEdit, QPushButton, QVBoxLayout, QWidget, QMessageBox, QComboBox, QDesktopWidget, QFileDialog, QMenuBar, QAction
 from PyQt5.QtCore import QFile, QTextStream, Qt
 from pytube import YouTube
 import os
@@ -14,6 +14,7 @@ class YouTubeDownloaderApp(QMainWindow):
         self.load_style_sheet()
         self.center_window()
         self.setWindowFlag(Qt.WindowMaximizeButtonHint, False)
+        self.create_menu()
 
     def init_ui(self):
         self.setWindowTitle(self.messages['title'])
@@ -65,6 +66,30 @@ class YouTubeDownloaderApp(QMainWindow):
         except FileNotFoundError:
             print(f"Archivo de idioma '{file_name}' no encontrado.")
             return {}
+
+    def create_menu(self):
+        menu_bar = self.menuBar()
+        config_menu = menu_bar.addMenu('Lenguages')
+
+        self.english_action = QAction('English', self)
+        self.english_action.triggered.connect(lambda: self.change_language_to('languages/messages_en.json'))
+        config_menu.addAction(self.english_action)
+
+        self.spanish_action = QAction('Español', self)
+        self.spanish_action.triggered.connect(lambda: self.change_language_to('languages/messages_es.json'))
+        config_menu.addAction(self.spanish_action)
+        # Puedes añadir más idiomas y acciones aquí si es necesario
+
+    def change_language_to(self, language_file):
+        self.messages = self.load_messages(language_file)
+        self.change_language()
+    
+    def change_language(self):
+        self.setWindowTitle(self.messages['title'])
+        self.label.setText(self.messages['enter_link'])
+        self.format_label.setText(self.messages['select_video_format'])
+        self.format_audio_label.setText(self.messages['select_audio_format'])
+        self.download_button.setText(self.messages['download_button'])
 
     def download_video(self):
         video_url = self.link_input.text()
