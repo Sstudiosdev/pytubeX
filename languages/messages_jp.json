@@ -1,0 +1,13 @@
+{
+    "title": "YouTube 動画ダウンローダー",
+    "enter_link": "YouTubeのリンクを入力：",
+    "select_video_format": "ビデオフォーマットを選択します：",
+    "select_audio_format": "オーディオフォーマットを選択します：",
+    "download_button": "ダウンロード",
+    "download_completed": "ダウンロード完了",
+    "file_downloaded_success": "ファイルは正常にダウンロードされました。",
+    "select_valid_location": "有効なダウンロード先を選択してください。",
+    "file_not_found": "ダウンロード用のファイルが見つかりません。",
+    "select_at_least_one_format": "少なくとも1つの形式を選択してください。",
+    "error_download": "ファイルのダウンロードでエラーが発生しました： {error_message}"
+}
