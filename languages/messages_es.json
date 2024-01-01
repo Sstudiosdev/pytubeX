@@ -1,0 +1,12 @@
+{
+    "title": "Descargador de Videos de YouTube",
+    "enter_link": "Ingrese el enlace de YouTube:",
+    "select_video_format": "Seleccione el formato de video:",
+    "select_audio_format": "Seleccione el formato de audio:",
+    "download_button": "Descargar",
+    "download_completed": "Descarga completada",
+    "file_downloaded_success": "El archivo se ha descargado exitosamente.",
+    "select_valid_location": "Selecciona una ubicación de descarga válida.",
+    "file_not_found": "No se pudo encontrar el archivo para descargar.",
+    "select_at_least_one_format": "Selecciona al menos un formato."
+}

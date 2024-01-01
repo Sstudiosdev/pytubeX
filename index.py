@@ -1,0 +1,114 @@
+import sys
+from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QLineEdit, QPushButton, QVBoxLayout, QWidget, QMessageBox, QComboBox, QDesktopWidget, QFileDialog
+from PyQt5.QtCore import QFile, QTextStream, Qt
+from pytube import YouTube
+import os
+import json
+
+class YouTubeDownloaderApp(QMainWindow):
+    def __init__(self):
+        super().__init__()
+
+        self.messages = self.load_messages('languages/messages_en.json')  # Ruta actualizada
+        self.init_ui()
+        self.load_style_sheet()
+        self.center_window()
+        self.setWindowFlag(Qt.WindowMaximizeButtonHint, False)
+
+    def init_ui(self):
+        self.setWindowTitle(self.messages['title'])
+        self.setGeometry(0, 0, 400, 250)
+
+        self.label = QLabel(self.messages['enter_link'], self)
+        self.link_input = QLineEdit(self)
+        
+        self.format_label = QLabel(self.messages['select_video_format'], self)
+        self.format_video_combo = QComboBox(self)
+        self.format_audio_label = QLabel(self.messages['select_audio_format'], self)
+        self.format_audio_combo = QComboBox(self)
+
+        self.format_video_combo.addItems(["Seleccionar...", "MP4", "MKV"])
+        self.format_audio_combo.addItems(["Seleccionar...", "MP3"])
+
+        self.download_button = QPushButton(self.messages['download_button'], self)
+        self.download_button.clicked.connect(self.download_video)
+
+        layout = QVBoxLayout()
+        layout.addWidget(self.label)
+        layout.addWidget(self.link_input)
+        layout.addWidget(self.format_label)
+        layout.addWidget(self.format_video_combo)
+        layout.addWidget(self.format_audio_label)
+        layout.addWidget(self.format_audio_combo)
+        layout.addWidget(self.download_button)
+
+        container = QWidget()
+        container.setLayout(layout)
+        self.setCentralWidget(container)
+
+    def load_style_sheet(self):
+        style_sheet = QFile("style.css")
+        if style_sheet.open(QFile.ReadOnly | QFile.Text):
+            stream = QTextStream(style_sheet)
+            self.setStyleSheet(stream.readAll())
+
+    def center_window(self):
+        screen_geometry = QDesktopWidget().screenGeometry()
+        x = (screen_geometry.width() - self.width()) // 2
+        y = (screen_geometry.height() - self.height()) // 2
+        self.move(int(x), int(y))
+
+    def load_messages(self, file_name):
+        try:
+            with open(file_name, 'r', encoding='utf-8') as file:
+                return json.load(file)
+        except FileNotFoundError:
+            print(f"Archivo de idioma '{file_name}' no encontrado.")
+            return {}
+
+    def download_video(self):
+        video_url = self.link_input.text()
+        download_video_format = self.format_video_combo.currentText()
+        download_audio_format = self.format_audio_combo.currentText()
+
+        try:
+            if download_video_format == "Seleccionar..." and download_audio_format == "Seleccionar...":
+                QMessageBox.warning(self, 'Error', self.messages['select_at_least_one_format'])
+                return
+
+            yt = YouTube(video_url)
+            video = None
+            audio = None
+
+            if download_video_format == "MP4":
+                video = yt.streams.get_highest_resolution()
+            elif download_video_format == "MKV":
+                video = yt.streams.filter(file_extension='webm').first()
+            
+            if download_audio_format == "MP3":
+                audio = yt.streams.filter(only_audio=True).first()
+
+            if video or audio:
+                default_location = os.path.join(os.path.expanduser("~"), "Desktop")
+                save_location, _ = QFileDialog.getSaveFileName(self, self.messages['download_button'], default_location)
+                if save_location:
+                    if video:
+                        video.download(output_path=os.path.dirname(save_location))
+                    elif audio:
+                        audio.download(output_path=os.path.dirname(save_location))
+                    QMessageBox.information(self, self.messages['download_completed'], self.messages['file_downloaded_success'])
+                else:
+                    QMessageBox.warning(self, 'Error', self.messages['select_valid_location'])
+            else:
+                QMessageBox.warning(self, 'Error', self.messages['file_not_found'])
+        except Exception as e:
+            QMessageBox.critical(self, 'Error', f'Error al descargar el archivo: {str(e)}')
+
+def run_app():
+    app = QApplication(sys.argv)
+    downloader_app = YouTubeDownloaderApp()
+    downloader_app.show()
+    sys.exit(app.exec_())
+
+if __name__ == '__main__':
+    run_app()

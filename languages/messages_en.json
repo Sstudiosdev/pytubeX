@@ -1,0 +1,12 @@
+{
+    "title": "YouTube Video Downloader",
+    "enter_link": "Enter YouTube link:",
+    "select_video_format": "Select video format:",
+    "select_audio_format": "Select audio format:",
+    "download_button": "Download",
+    "download_completed": "Download completed",
+    "file_downloaded_success": "File has been downloaded successfully.",
+    "select_valid_location": "Select a valid download location.",
+    "file_not_found": "File not found for download.",
+    "select_at_least_one_format": "Select at least one format."
+}
