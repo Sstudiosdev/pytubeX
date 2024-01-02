@@ -1,6 +1,6 @@
 import sys
 from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QLineEdit, QPushButton, QVBoxLayout, QWidget, QMessageBox, QComboBox, QDesktopWidget, QFileDialog, QMenuBar, QAction
-from PyQt5.QtCore import QFile, QTextStream, Qt
+from PyQt5.QtCore import QFile, QTextStream, Qt, QSettings
 from pytube import YouTube
 import os
 import json
@@ -9,29 +9,31 @@ class YouTubeDownloaderApp(QMainWindow):
     def __init__(self):
         super().__init__()
 
-        self.messages = self.load_messages('languages/messages_en.json')  # Ruta actualizada
+        self.settings = QSettings("MyApp", "YouTubeDownloader")
+        self.messages = {}
         self.init_ui()
         self.load_style_sheet()
         self.center_window()
         self.setWindowFlag(Qt.WindowMaximizeButtonHint, False)
         self.create_menu()
+        self.load_language_setting()
 
     def init_ui(self):
-        self.setWindowTitle(self.messages['title'])
+        self.setWindowTitle("")
         self.setGeometry(0, 0, 400, 250)
 
-        self.label = QLabel(self.messages['enter_link'], self)
+        self.label = QLabel("", self)
         self.link_input = QLineEdit(self)
         
-        self.format_label = QLabel(self.messages['select_video_format'], self)
+        self.format_label = QLabel("", self)
         self.format_video_combo = QComboBox(self)
-        self.format_audio_label = QLabel(self.messages['select_audio_format'], self)
+        self.format_audio_label = QLabel("", self)
         self.format_audio_combo = QComboBox(self)
 
         self.format_video_combo.addItems(["Seleccionar...", "MP4", "MKV"])
         self.format_audio_combo.addItems(["Seleccionar...", "MP3"])
 
-        self.download_button = QPushButton(self.messages['download_button'], self)
+        self.download_button = QPushButton("", self)
         self.download_button.clicked.connect(self.download_video)
 
         layout = QVBoxLayout()
@@ -84,15 +86,15 @@ class YouTubeDownloaderApp(QMainWindow):
         config_menu.addAction(self.japan_action)
 
     def change_language_to(self, language_file):
-        self.messages = self.load_messages(language_file)
-        self.change_language()
+        self.save_language_setting(language_file)
+        self.load_language_setting()
     
     def change_language(self):
-        self.setWindowTitle(self.messages['title'])
-        self.label.setText(self.messages['enter_link'])
-        self.format_label.setText(self.messages['select_video_format'])
-        self.format_audio_label.setText(self.messages['select_audio_format'])
-        self.download_button.setText(self.messages['download_button'])
+        self.setWindowTitle(self.messages.get('title', ''))
+        self.label.setText(self.messages.get('enter_link', ''))
+        self.format_label.setText(self.messages.get('select_video_format', ''))
+        self.format_audio_label.setText(self.messages.get('select_audio_format', ''))
+        self.download_button.setText(self.messages.get('download_button', ''))
 
     def download_video(self):
         video_url = self.link_input.text()
@@ -100,7 +102,7 @@ class YouTubeDownloaderApp(QMainWindow):
         download_audio_format = self.format_audio_combo.currentText()
 
         try:
-            if download_video_format == "..." and download_audio_format == "...":
+            if download_video_format == "Seleccionar..." and download_audio_format == "Seleccionar...":
                 QMessageBox.warning(self, 'Error', self.messages['select_at_least_one_format'])
                 return
 
@@ -132,6 +134,14 @@ class YouTubeDownloaderApp(QMainWindow):
         except Exception as e:
             error_message = self.messages['error_download'].format(error_message=str(e))
             QMessageBox.critical(self, 'Error', error_message)
+
+    def save_language_setting(self, language_file):
+        self.settings.setValue("language", language_file)
+
+    def load_language_setting(self):
+        language = self.settings.value("language", "languages/messages_en.json")
+        self.messages = self.load_messages(language)
+        self.change_language()
 
 def run_app():
     app = QApplication(sys.argv)
